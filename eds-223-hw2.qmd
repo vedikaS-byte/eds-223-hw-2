@@ -24,13 +24,35 @@ library(sf)
 library(here)
 library(tidyverse)
 library(ggplot2)
+library(tmap)
 ```
 
 
 ```{r}
+# Now, load in the data
+ej_screen <- st_read(here::here("data","ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
+birds <- st_read(here::here("data","gbif-birds-LA", "gbif-birds-LA.shp"))
+inequal <- st_read(here::here("data","mapping-inequality", "mapping-inequality-los-angeles.json"))
 
+# Check crs for all
+st_crs(ej_screen) # WGS 84 / Pseudo-Mercator 
+st_crs(birds)  # WGS 84 
+st_crs(inequal) # WGS 84 
+
+# Transform to match same CRS as ej_screen
+birds <- st_transform(birds, st_crs(ej_screen))
+inequal <- st_transform(inequal, st_crs(ej_screen))
 ```
 
+```{r}
+# Create a map of historical redlining neighborhoods, including:
+# - neighborhoods colored by HOLC grade an appropriate base map 
+# - a clear title and legend 
+
+
+
+
+```
 
 
 
