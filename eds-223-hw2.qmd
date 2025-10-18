@@ -25,7 +25,6 @@ library(here)
 library(tidyverse)
 library(ggplot2)
 library(tmap)
-
 ```
 
 
@@ -47,25 +46,27 @@ inequal <- st_transform(inequal, st_crs(ej_screen))
 
 ```{r}
 # Create a map of historical redlining neighborhoods, including:
-# - neighborhoods colored by HOLC grade an appropriate base map 
+# - neighborhoods colored by HOLC grade 
+# - an appropriate base map 
 # - a clear title and legend 
-colnames(ej_screen)
-colnames(inequal)
-
-tm_shape(inequal, bbox = st_bbox(inequal))  + 
-  tm_tiles("CartoDB.Positron") + 
+bbox <- st_bbox(inequal)
+tm_shape(inequal, bbox = bbox)  + 
+  tm_tiles("CartoDB.Positron") + #https://leaflet-extras.github.io/leaflet-providers/preview/
   tm_polygons(
     col = "grade",
     alpha = 0.6,
-    border.col = "black" ) +  
+    border.col = "black", 
+    title = "HOLC Grade"
+    ) +  
   tm_layout(
     title = "Historical Redlining in Los Angeles (HOLC)",
+    title.position = c("top", "center"),
     legend.outside = TRUE,
-    legend.outside.position = "right",
-    frame = FALSE
+    component.autoscale = FALSE
+    #legend.outside.position = "right"
   ) +
   tm_compass(position = c("left", "top")) +
-  tm_scale_bar(position = c("left", "bottom")) + 
+  tm_scalebar(position = c("left", "bottom")) + 
   tm_graticules()
  
 ```
