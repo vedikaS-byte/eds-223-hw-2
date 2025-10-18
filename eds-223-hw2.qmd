@@ -19,6 +19,7 @@ For this assignment, you must complete the following:
 - a clear title and legend 
 
 ```{r}
+#| include: false
 # Import libraries
 library(sf)
 library(here)
@@ -29,11 +30,15 @@ library(tmap)
 
 
 ```{r}
+#| include: false
 # Now, load in the data
 ej_screen <- st_read(here::here("data","ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
 birds <- st_read(here::here("data","gbif-birds-LA", "gbif-birds-LA.shp"))
 inequal <- st_read(here::here("data","mapping-inequality", "mapping-inequality-los-angeles.json"))
+```
 
+
+```{r}
 # Check crs for all
 st_crs(ej_screen) # WGS 84 / Pseudo-Mercator 
 st_crs(birds)  # WGS 84 
@@ -43,6 +48,8 @@ st_crs(inequal) # WGS 84
 birds <- st_transform(birds, st_crs(ej_screen))
 inequal <- st_transform(inequal, st_crs(ej_screen))
 ```
+
+
 
 ```{r}
 # Create a map of historical redlining neighborhoods, including:
@@ -57,20 +64,18 @@ tm_shape(inequal, bbox = bbox)  +
     alpha = 0.6,
     border.col = "black", 
     title = "HOLC Grade"
-    ) +  
-  tm_layout(
-    title = "Historical Redlining in Los Angeles (HOLC)",
-    title.position = c("top", "center"),
-    legend.outside = TRUE,
-    component.autoscale = FALSE
-    #legend.outside.position = "right"
-  ) +
+    )  +
   tm_compass(position = c("left", "top")) +
   tm_scalebar(position = c("left", "bottom")) + 
-  tm_graticules()
- 
+  tm_graticules() + tm_title("Historical Redlining in Los Angeles (HOLC)", size = 1) +
+  tm_layout(
+   #title = "Historical Redlining in Los Angeles (HOLC)",
+    title.position = c("top", "center"),
+    legend.outside = TRUE,
+    #legend.outside.position = "right"
+    component.autoscale = FALSE
+  )
 ```
-
 
 
 2. Create a table summarizing: 
@@ -80,6 +85,21 @@ tm_shape(inequal, bbox = bbox)  +
 blocks, so you will need to combine the data spatially before doing
 summary statistics. Once you combine and no longer need the geometries,
 you can use st_drop_geometry(). 
+
+```{r}
+#  Hint: The HOLC data contains the grades and the EJScreen data contains the census
+# blocks, so you will need to combine the data spatially before doing
+# summary statistics. Once you combine and no longer need the geometries,
+# you can use st_drop_geometry(). 
+
+
+
+
+
+```
+
+
+
 
 3. Create at least two visualizations summarizing current conditions (from the EJScreen data) within HOLC grades using the mean of the following variables (you may combine
 variables or create separate plots): 
