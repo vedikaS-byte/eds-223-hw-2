@@ -4,6 +4,8 @@ format: html
 editor: 
   markdown: 
     wrap: 72
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## Part 1: Legacy of redlining in current environmental (in)justice
@@ -56,30 +58,29 @@ inequal <- st_transform(inequal, st_crs(ej_screen))
 # - neighborhoods colored by HOLC grade 
 # - an appropriate base map 
 # - a clear title and legend 
-map1 <- tm_shape(inequal)  + 
-tm_tiles("CartoDB.Positron") + #https://leaflet-extras.github.io/leaflet-providers/preview/
+map1 <- tm_shape(inequal) +
+  tm_tiles("CartoDB.Positron") + #https://leaflet-extras.github.io/leaflet-providers/preview/
   tm_polygons(
     col = "grade",
-    alpha = 0.6,
-    border.col = "black", 
-    title = "HOLC Grade"
-    )  +
+    palette = "Reds",
+    alpha = 0.7,                      
+    border.col = "black",
+    title = "HOLC Grade")   +
   tm_compass(position = c("left", "top")) +
-  tm_scalebar(position = c("left", "bottom")) + 
-  tm_graticules() + 
+  tm_scalebar(position = c("left", "bottom")) +
+  tm_graticules() +
   tm_layout(
-    title = "Historical Redlining in Los Angeles (HOLC)",
-    #title.outside = TRUE,
-    title.position = c("center", "top"),   
-    outer.margins = c(0.1, 0.05, 0.05, 0.05),  
+    main.title = "Historical Redlining in Los Angeles (HOLC)", 
+    title.size = 1,
+    #outer.margins = c(0.1, 0.05, 0.05, 0.05),
     legend.outside = TRUE,
     legend.outside.position = "right",
     component.autoscale = FALSE
   )
 
+map1
 
 tmap_save(map1, "figs/LA_HOC.png")
-
 
 ```
 
