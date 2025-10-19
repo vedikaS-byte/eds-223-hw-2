@@ -62,7 +62,7 @@ birds <- st_transform(birds, st_crs(ej_screen))
 inequal <- st_transform(inequal, st_crs(ej_screen))
 ```
 
-
+### Map of Historical Redlining in Los Angeles (HOLC)
 
 ```{r}
 # Create a map of historical redlining neighborhoods, including:
@@ -95,7 +95,8 @@ tmap_save(map1, "figs/LA_HOC.png")
 
 ```
 
-
+### Summary Table of Census Block Groups Inside or Outside HOLC Grade
+_. 
 2. Create a table summarizing: 
 - the percentage of census block groups that fall within each HOLC grade 
 - Also include the percent of census block groups that don’t fall within a HOLC grade 
@@ -115,8 +116,18 @@ str(inequal)
 # thought process: 
 # first, need to combine data spatially via spatial join (left to keep observations in x + observations in y that are found in x), then drop geoms...  assign HOLC grade to each census block
 
-# Filter for 
+# Filter for observations within LA county, not the whole country
 ej_la <- ej_screen %>% filter(STATE_NAME == "California", CNTY_NAME == "Los Angeles County") # Keep all LA census blocks and not just ones that intersect HOLC polygons
+
+# st_join() performs spatial join between spatial objects
+# ej_la is census block data for Los Angeles County
+# inequal  is  HOLC (redlining) polygon layer
+# assign to each census block from ej_la the HOLC grade from  HOLC polygons (inequal) that spatially overlap it
+# default spatial predicate is st_intersects (any block that touches or overlaps a HOLC polygon gets matched)
+# left = T: keep all features from ej_la even if do not intersect any HOLC polygon
+# for those outside HOLC boundaries the HOLC columns (like grade) will be NA
+
+# default spatial predicate is st_intersects meaning any block that touches or overlaps a HOLC polygon gets matched
 
 census_holc <- st_join(ej_la, inequal, left = T)
 census_holc_df <- st_drop_geometry(census_holc)
