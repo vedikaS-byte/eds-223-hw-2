@@ -145,7 +145,7 @@ census_summary %>%
 ```
 
 
-
+ 
 
 3. Create at least two visualizations summarizing current conditions (from the EJScreen data) within HOLC grades using the mean of the following variables (you may combine
 variables or create separate plots): 
