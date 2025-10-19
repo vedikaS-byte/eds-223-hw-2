@@ -1,6 +1,13 @@
 ---
-title: "eds-223-hw2"
-format: html
+title: "Exploring Patterns of Environmental Justice in Los Angeles County"
+author: "Vedika Shirtekar" 
+date: "10/19/2025"
+format:
+  pdf: 
+    code-fold: false
+execute: 
+  warning: false
+  message: false
 editor: 
   markdown: 
     wrap: 72
@@ -10,13 +17,16 @@ editor_options:
 
 # Exploring Patterns of Environmental Justice in Los Angeles County
 Primary Objective
-With an estimated 9.8 million residents in 2023, Los Angeles County is the most populous county in California and the entire United States (https://datausa.io/profile/geo/los-angeles-county-ca). Los Angeles County is also racially diverse: there are about 2.48 million White (Non-Hispanic) residents, 
-In 2023, there were 1.09 times more White (Non-Hispanic) residents (2.48M people) in Los Angeles County, CA than any other race or ethnicity. There were 2.26M Other (Hispanic) and 1.46M Asian (Non-Hispanic) residents, the second and third most common ethnic groups.
+With an estimated 9.8 million residents in 2023, Los Angeles County is the most populous county in California and the entire United States (https://datausa.io/profile/geo/los-angeles-county-ca). Los Angeles County is also highly racially diverse, with approximately 2.48 million White (non-Hispanic) residents, 2.26 million Hispanic residents, 1.4 million Asian residents, and 743,000 Black residents . The city has a rich history and is culturally and racially diverse; however, marginalized communities continue to face disproportionate environmental, social, and economic burdens. 
 
-The goal of this analysis is to assess the impacts of historical redlining on communities and biodiversity in Los Angeles (LA). The followingf research question was used to guide the analysis:
-To what extent has historical 
+The Home Owners’ Loan Corporation (HOLC) 
 
-## Load the appropriate packages
+The goal of this analysis is to assess the impacts of historical redlining on communities and biodiversity in Los Angeles (LA). The following research question was used to guide the analysis:
+
+**To what extent has historical redlining in Los Angeles contributed to current disparities in environmental quality and urban biodiversity?**
+
+## Importing Data and Loading Appropriate Packages
+1. Load the appropriate packages for the analyis.
 ```{r}
 #| include: false
 # Import libraries
@@ -40,7 +50,7 @@ inequal <- st_read(here::here("data","mapping-inequality", "mapping-inequality-l
 ```
 
 ## Part 1: Legacy of Redlining in Current Environmental Injustice
-
+4. 
 Your first task is to explore historical redlining in Los Angeles and
 its legacy on present-day environmental justice.
 
@@ -185,16 +195,16 @@ holc_summary %>% ggplot(aes(x = grade, y = mean_value, fill = grade)) +
   theme(legend.position = "none") 
 
 # 
-ggplot(holc_summary, aes(x = grade, y = mean_value, color = grade)) +
-  geom_point(size = 3) +
-  facet_wrap(~ variable, scales = "free_y") +
-  labs(
-    x = "HOLC Grade",
-    y = "Mean Value",
-    title = "Mean EJScreen Indicators by HOLC Grade"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "none")
+# ggplot(holc_summary, aes(x = grade, y = mean_value, color = grade)) +
+#   geom_point(size = 3) +
+#   facet_wrap(~ variable, scales = "free_y") +
+#   labs(
+#     x = "HOLC Grade",
+#     y = "Mean Value",
+#     title = "Mean EJScreen Indicators by HOLC Grade"
+#   ) +
+#   theme_minimal() +
+#   theme(legend.position = "none")
 
 ```
 
