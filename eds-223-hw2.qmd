@@ -8,11 +8,37 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Exploring Patterns of Environmental Justic in Los Angeles County
+# Exploring Patterns of Environmental Justice in Los Angeles County
 Primary Objective
-Los Angeles County is the most populous county in the United States as well as the state of California, with about 9.8 million residents as of 2023 (https://datausa.io/profile/geo/los-angeles-county-ca).
+With an estimated 9.8 million residents in 2023, Los Angeles County is the most populous county in California and the entire United States (https://datausa.io/profile/geo/los-angeles-county-ca). Los Angeles County is also racially diverse: there are about 2.48 million White (Non-Hispanic) residents, 
+In 2023, there were 1.09 times more White (Non-Hispanic) residents (2.48M people) in Los Angeles County, CA than any other race or ethnicity. There were 2.26M Other (Hispanic) and 1.46M Asian (Non-Hispanic) residents, the second and third most common ethnic groups.
 
-## Part 1: Legacy of redlining in current environmental (in)justice
+The goal of this analysis is to assess the impacts of historical redlining on communities and biodiversity in Los Angeles (LA). 
+
+## Load the appropriate packages
+```{r}
+#| include: false
+# Import libraries
+library(sf)
+library(here)
+library(tidyverse)
+library(ggplot2)
+library(tmap)
+library(kableExtra)
+```
+
+## Importing Data 
+1. Import the geodatabase of EJ Screen data, the shapefile of bird observations, and the json file of HOLC redlining neighborhoods in LA.
+
+```{r}
+#| output: false
+# Load in the data
+ej_screen <- st_read(here::here("data","ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
+birds <- st_read(here::here("data","gbif-birds-LA", "gbif-birds-LA.shp"))
+inequal <- st_read(here::here("data","mapping-inequality", "mapping-inequality-los-angeles.json"))
+```
+
+## Part 1: Legacy of Redlining in Current Environmental Injustice
 
 Your first task is to explore historical redlining in Los Angeles and
 its legacy on present-day environmental justice.
@@ -23,27 +49,6 @@ For this assignment, you must complete the following:
 1. Create a map of historical redlining neighborhoods, including:
 - neighborhoods colored by HOLC grade an appropriate base map 
 - a clear title and legend 
-
-```{r}
-#| include: false
-# Import libraries
-library(sf)
-library(here)
-library(tidyverse)
-library(ggplot2)
-library(tmap)
-library(kableExtra)
-
-```
-
-
-```{r}
-#| output: false
-# Now, load in the data
-ej_screen <- st_read(here::here("data","ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
-birds <- st_read(here::here("data","gbif-birds-LA", "gbif-birds-LA.shp"))
-inequal <- st_read(here::here("data","mapping-inequality", "mapping-inequality-los-angeles.json"))
-```
 
 
 ```{r}
@@ -211,7 +216,7 @@ bird_summary <- birds_holc %>%
   st_drop_geometry() %>% #
   group_by(grade) %>%
   summarise(count = n()) %>%
-  mutate(percent = round(100 * count / sum(count), 2),
+  mutate(percent = round(100 * (count / sum(count)), 2),
          grade = factor(grade, levels = c("A","B","C","D"))) %>%
   arrange(grade)
 
