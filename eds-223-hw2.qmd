@@ -8,6 +8,10 @@ editor_options:
   chunk_output_type: console
 ---
 
+# Exploring Patterns of Environmental Justic in Los Angeles County
+Primary Objective
+Los Angeles County is the most populous county in the United States as well as the state of California, with about 9.8 million residents as of 2023 (https://datausa.io/profile/geo/los-angeles-county-ca).
+
 ## Part 1: Legacy of redlining in current environmental (in)justice
 
 Your first task is to explore historical redlining in Los Angeles and
@@ -105,17 +109,11 @@ str(inequal)
 
 # thought process: 
 # first, need to combine data spatially via spatial join (left to keep observations in x + observations in y that are found in x), then drop geoms...  assign HOLC grade to each census block
-# st_crs(ej_screen)
-# st_crs(inequal)
 
-#Keep all rows from ej_screen even if  don’t intersect any inequal polygon , If a census block doesn’t fall inside a HOLC area, its new grade column will be NA
-# Now we can drop geometries for summary stats
-# We can create a table to check for the count of redlined neighborhoods in census blocks
-table(census_holc_df$grade, useNA = "ifany")
-str(census_holc_df)
+# Filter for 
+ej_la <- ej_screen %>% filter(STATE_NAME == "California", CNTY_NAME == "Los Angeles County") # Keep all LA census blocks and not just ones that intersect HOLC polygons
 
-ej_la <- st_filter(ej_screen, inequal, .predicate = st_intersects) # get data just for LA
-census_holc <- st_join(ej_la, inequal, left = TRUE)
+census_holc <- st_join(ej_la, inequal, left = T)
 census_holc_df <- st_drop_geometry(census_holc)
 
 census_summary <- census_holc_df %>%
@@ -125,9 +123,9 @@ census_summary <- census_holc_df %>%
 
 census_summary %>% 
   kbl() %>%
-  kable_styling() 
+  kable_styling() # https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html 
 
-print(census_summary)
+
 ```
 
 
@@ -136,32 +134,58 @@ print(census_summary)
 3. Create at least two visualizations summarizing current conditions (from the EJScreen data) within HOLC grades using the mean of the following variables (you may combine
 variables or create separate plots): 
 
-- % low income percentile for Particulate Matter 2.5 
+- % low income 
+- percentile for Particulate Matter 2.5 
 - percentile for low life expectancy 
 -Use ggplot for your visualizations! You will first need to calculate mean of each variable grouped by HOLC grade. 
 
 ```{r}
-head(census_holc_df)
-
-# - % low income percentile for Particulate Matter 2.5 
-census_holc_df %>%
-  st_drop_geometry() %>%
+holc_summary <- census_holc_df %>%
+  group_by(grade) %>% 
   mutate(grade = ifelse(is.na(grade), "No HOLC grade", grade)) %>%
-  group_by(grade) %>%
+  filter(grade != "No HOLC grade") %>%
   summarise(
-    mean_pm25_lowinc = mean(pm25_lowinc_pctl, na.rm = TRUE),
-    mean_lifeexp = mean(lifeexp_pctl, na.rm = TRUE)
-  )
-str(census_holc_df)
-# - percentile for low life expectancy 
+    mean_low_income = mean(P_LOWINCPCT, na.rm = TRUE),
+    mean_pm25 = mean(P_PM25, na.rm = TRUE),
+    mean_low_life_exp = mean(P_LIFEEXPPCT, na.rm = TRUE)
+  ) %>%
+  pivot_longer(
+    cols = starts_with("mean_"),
+    names_to = "socio_economic",
+    values_to = "mean_value"
+  ) 
 
+# bar plot: mean value for each variable by HOLC grade
+holc_summary %>% ggplot(aes(x = grade, y = mean_value, fill = grade)) +
+  geom_col() +
+  facet_wrap(~ socio_economic, scales = "free_y") +
+  labs(
+    x = "HOLC Grade",
+    y = "Mean Value",
+    title = "Mean EJScreen Indicators by HOLC Grade"
+  ) +
+  theme_bw() + 
+  theme(legend.position = "none") 
 
+# 
+ggplot(holc_summary, aes(x = grade, y = mean_value, color = grade)) +
+  geom_point(size = 3) +
+  facet_wrap(~ variable, scales = "free_y") +
+  labs(
+    x = "HOLC Grade",
+    y = "Mean Value",
+    title = "Mean EJScreen Indicators by HOLC Grade"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
 
 ```
 
 
 Write a brief paragraph reflecting on these results. Interpret the patterns you observe in your results. Discuss potential relationships between historical redlining grades and current
 environmental/socioeconomic conditions. 
+
+
 
 
 ## Part 2: Legacy of redlining in biodiversity observations
@@ -175,13 +199,44 @@ Create a visualizations that shows:
 - The percentage of bird observations within each HOLC grade
 ```{r}
 # Ensure in same CRS! 
-st_crs(birds) == st_crs(inequal) # Yes, they match 
-str(birds)
-# Next, perform a spatial join between birds and holc
-birds_holc <- st_join(inequal, birds, left = T)
-birds_holc_df <- st_drop_geometry(birds_holc)
-# Then, filter for 2021-2023 only
-colnames(birds_holc_df)
+st_crs(birds) == st_crs(inequal) # Yes they match 
+
+
+# Perform spatial join to assign each bird observation to a HOLC grade polygon
+# st_intersects so points on borders are included in spatial 
+birds_holc <- st_join(birds, inequal, join = st_intersects, left = FALSE)
+
+# Summarize % of bird observations by HOLC grade
+bird_summary <- birds_holc %>%
+  st_drop_geometry() %>% #
+  group_by(grade) %>%
+  summarise(count = n()) %>%
+  mutate(percent = round(100 * count / sum(count), 2),
+         grade = factor(grade, levels = c("A","B","C","D"))) %>%
+  arrange(grade)
+
+print(bird_summary)
+
+# creat a pallete for each grade (percent of bird observations per HOLC grade)
+grade_colors <- c("A" = "#2ca25f",
+                  "B" = "#99d8c9",
+                  "C" = "#fec44f",
+                  "D" = "#de2d26")
+
+bird_summary %>% ggplot(aes(x = grade, y = percent, fill = grade)) +
+  geom_col(width = 0.7) +
+  geom_text(aes(label = paste0(percent, "%")), vjust = -0.5, size = 3.5) +
+  scale_fill_manual(values = grade_colors) +
+  labs(
+    title = "Percent of Bird Observations (2021–2023) within HOLC Grades",
+    x = "HOLC Grade",
+    y = "Percent of Bird Observations",
+    caption = "Bird observations within Los Angeles HOLC neighborhoods (2021–2023)."
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"))
+
+
 
 ```
 
