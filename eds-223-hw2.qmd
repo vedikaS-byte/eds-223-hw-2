@@ -87,7 +87,8 @@ ej_screen <- st_read(here::here("data","ejscreen",
 birds <- st_read(here::here("data","gbif-birds-LA", "gbif-birds-LA.shp"))
 
 # HOLC inequality data
-inequal <- st_read(here::here("data","mapping-inequality", "mapping-inequality-los-angeles.json"))
+inequal <- st_read(here::here("data","mapping-inequality", 
+                              "mapping-inequality-los-angeles.json"))
 ```
 
 ## Part 1: Legacy of Redlining in Current Environmental Injustice
@@ -130,7 +131,8 @@ st_crs(birds) == st_crs(inequal)
 ```{r}
 
 map1 <- tm_shape(inequal) + # Call spatial data source
-  tm_tiles("CartoDB.Positron") + # Establish basemap with tm_tiles using a view from Leaflet
+# Establish basemap with tm_tiles using view from Leaflet
+  tm_tiles("CartoDB.Positron") + 
   tm_polygons(
     col = "grade", # Color by HOLC grade
     palette = "reds", # Utilize color palette
@@ -191,7 +193,8 @@ ej_la <- ej_screen %>% filter(
 ```{r}
 # Perform a left join to join spatial overlaps
 census_holc <- st_join(ej_la, inequal, left = T)
-# Default spatial predicate is st_intersects (any block that touches or overlaps a HOLC polygon gets matched)
+# Default spatial predicate is st_intersects 
+# (any block that touches or overlaps a HOLC polygon gets matched)
 
 # Drop geometries
 census_holc_df <- st_drop_geometry(census_holc)
@@ -214,8 +217,6 @@ census_summary <- census_holc_df %>%
   summarise(count = n())%>% # Count # of rows in each grade group
   # Calculate % of census blocks in each grade over the total observations 
   mutate(percent = round(100 * count / sum(count), 2)) # Round to nearest hundreth
-
-print(census_summary)
 ```
 
 ```{r}
@@ -294,7 +295,7 @@ grade_avg_socio <- holc_summary %>%
 grade_avg_socio
 
 # Store graph in figs
-ggsave("figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = grade_avg_socio)
+#ggsave("figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = grade_avg_socio)
 ```
 
 ```{r}
@@ -302,7 +303,8 @@ ggsave("figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = grade_avg_socio
 heatmap_holc <- holc_summary %>% 
   ggplot(aes(x = socio_economic, y = grade, fill = mean_value)) +
   geom_tile(col = "black") + # Set heatmap and borders
-  scale_fill_viridis_c(option = "C") + # Set color scale 
+  scale_fill_viridis_c(option = "C", # Set color scale
+                       direction = -1) + # Reverse scale for higher numbers
   labs(
     x = "Environmental Justice Indicator",
     y = "HOLC Grade",
@@ -314,7 +316,7 @@ heatmap_holc <- holc_summary %>%
 heatmap_holc 
 
 # Store graph in figs
-ggsave("figs/Heatmap_Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = heatmap_holc)
+#ggsave("figs/Heatmap_Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = heatmap_holc)
 ```
 
 It is noticeable that redlined communities with a grade of "D" ("worst"
@@ -388,17 +390,27 @@ bird_summary %>%
     size = 3) +
   scale_fill_manual(values = grade_colors) + # Fill with palette
   labs(
-    title = "Percent of Bird Observations in Redlined Neighborhoods within HOLC Grades (2021–2023)",
+title = "Percent of Bird Observations in Redlined Neighborhoods within HOLC Grades (2021–2023)",
     x = "HOLC Grade",
     y = "Percent of Bird Observations" ) +
   theme_bw() 
-
 ```
 
 Interestingly, areas graded “C” accounted for the largest share of bird
-biodiversity observations at 35.36% while areas graded "B" where
-
--   Spolier alert!! Our results don’t match the findings from Ellis-Soto
-    et al. 2023! Read the abstract of the study. Why might we have
-    obtained different results in our analysis? What did the paper
-    consider that we did not?
+biodiversity observations at 35.36% while areas graded "B" had the
+lowest proportion at 17.84% of observations. About 2.14% of biodiversity
+observations occurred in areas without a HOLC grade, underscoring the
+need to reassess and address under sampling in ungraded or excluded
+regions of Los Angeles. The results are unexpected considering the
+initial hypothesis that higher-rated areas would present lower
+biodiversity. Importantly, the results of this analysis do not match
+those made by Ellis-Soto et al. 2013. One possible reason is the sample
+size; Ellis-Soto et al. sampled 195 cities as opposed to one city.
+Additionally, the authors examined a 20 year temporal comparison using
+historical data. In contrast, this analysis utilized a three year period
+of bird observations in relation to historical (and potentially
+outdated) redlining boundaries in Los Angeles. Future analyses could
+expand the scope by sampling multiple cities across a larger geographic
+area (ex. California) to obtain a more robust dataset and enable
+comparisons of bird observations across locations with and without
+historically redlined neighborhoods over an extended period of time.
