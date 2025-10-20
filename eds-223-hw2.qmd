@@ -158,52 +158,67 @@ tmap_save(map1, "figs/LA_HOC.png")
 
 ### Summary Table of Census Block Groups Inside or Outside HOLC Grade
 
-2\. Create a table summarizing: - the percentage of census block groups
-that fall within each HOLC grade - Also include the percent of census
-block groups that don’t fall within a HOLC grade - Hint: The HOLC data
-contains the grades and the EJScreen data contains the census blocks, so
-you will need to combine the data spatially before doing summary
-statistics. Once you combine and no longer need the geometries, you can
-use st_drop_geometry().
+To evaluate patterns of enviornmental injustice, a summary table was
+created showing the proportion of census block groups that do and do not
+fall within each HOLC grade.
+
+5.  Filter `ej_screen` for observations within LA county such that all
+    LA census blocks are obtained.
 
 ```{r}
-#  Hint: The HOLC data contains the grades and the EJScreen data contains the census
-# blocks, so you will need to combine the data spatially before doing
-# summary statistics. Once you combine and no longer need the geometries,
-# you can use st_drop_geometry(). 
-str(ej_screen)
-str(inequal)
-
-# thought process: 
-# first, need to combine data spatially via spatial join (left to keep observations in x + observations in y that are found in x), then drop geoms...  assign HOLC grade to each census block
-
 # Filter for observations within LA county, not the whole country
-ej_la <- ej_screen %>% filter(STATE_NAME == "California", CNTY_NAME == "Los Angeles County") # Keep all LA census blocks and not just ones that intersect HOLC polygons
-
-# st_join() performs spatial join between spatial objects
-# ej_la is census block data for Los Angeles County
-# inequal  is  HOLC (redlining) polygon layer
-# assign to each census block from ej_la the HOLC grade from  HOLC polygons (inequal) that spatially overlap it
-# default spatial predicate is st_intersects (any block that touches or overlaps a HOLC polygon gets matched)
-# left = T: keep all features from ej_la even if do not intersect any HOLC polygon
-# for those outside HOLC boundaries the HOLC columns (like grade) will be NA
-
-# default spatial predicate is st_intersects meaning any block that touches or overlaps a HOLC polygon gets matched
-
-census_holc <- st_join(ej_la, inequal, left = T)
-census_holc_df <- st_drop_geometry(census_holc)
-
-census_summary <- census_holc_df %>%
-  mutate(grade = ifelse(is.na(grade), "No HOLC grade", grade)) %>% 
-  group_by(grade) %>% summarise(count = n())%>% # count # of rows in each grade group
-  mutate(percent = round(100 * count / sum(count), 2)) # create a new variable to calculate the percent of how much each grade over the total observations represents
-
-census_summary %>% 
-  kbl() %>%
-  kable_styling() # https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html 
-
-
+ej_la <- ej_screen %>% filter(
+  STATE_NAME == "California", 
+  CNTY_NAME == "Los Angeles County") 
+# Keep all LA census blocks and not just ones that intersect HOLC polygons
 ```
+
+6.  Perform a spatial (left) join to attach attributes from `inequal` to
+    each feature in `ej_la` based on spatial overlap, linking census
+    block groups to a corresponding HOLC grade while retaining all
+    census data. Strip geometries with st_drop_geometry() to remove the
+    spatial information.
+
+```{r}
+# Perform a left join to join spatial overlaps
+census_holc <- st_join(ej_la, inequal, left = T)
+# Default spatial predicate is st_intersects (any block that touches or overlaps a HOLC polygon gets matched)
+
+# Drop geometries
+census_holc_df <- st_drop_geometry(census_holc)
+```
+
+7.  Summarize the percentage of census blocks in or outside a HOLC
+    grade. Format the proportions as a table using
+    [functions](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html)
+    in kableExtra. "NA" values stored as HOLC grades are interpreted as
+    a census blocks not covered by the historical redlining map; the
+    census block falls outside HOLC mapped areas.
+
+```{r}
+census_summary <- census_holc_df %>%
+  mutate(
+    grade = ifelse(is.na(grade), # Replace "NA" with "No HOLC grade" if NA
+                   "No HOLC grade", 
+                   grade)) %>% # Else leave assigned grade untouched
+  group_by(grade) %>% # Group by grade
+  summarise(count = n())%>% # Count # of rows in each grade group
+  # Calculate % of census blocks in each grade over the total observations 
+  mutate(percent = round(100 * count / sum(count), 2)) # Round to nearest hundreth
+
+print(census_summary)
+```
+
+```{r}
+# Format output as table
+census_summary %>% 
+  kbl() %>% # Call html format
+  kable_styling() # Formatted borders
+```
+
+### Visualizing Current Environmental Justice Conditions in Redlined LA Communties
+
+To
 
 3.  Create at least two visualizations summarizing current conditions
     (from the EJScreen data) within HOLC grades using the mean of the
