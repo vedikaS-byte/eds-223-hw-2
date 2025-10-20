@@ -382,12 +382,25 @@ birds_holc <- st_join(birds, inequal, join = st_intersects, left = FALSE)
 # Summarize % of bird observations by HOLC grade
 bird_summary <- birds_holc %>%
   st_drop_geometry() %>%  
+  mutate(grade = ifelse(is.na(grade), # Replace "NA" with "No HOLC grade" if NA
+                 "No HOLC grade", 
+                  grade)) %>% # Else leave assigned grade untouched
   group_by(grade) %>%
   summarise(count = n()) %>% # Count observations per grade group
 # Calculate % of observations in each grade over the total observations 
   mutate(percent = round(100 * (count / sum(count)), 2))
+```
 
-print(bird_summary)
+```{r}
+# Format bird_summary using kableExtra
+bird_summary %>% 
+  rename(
+  "Count of Bird Observations" = count, # Rename count
+  "Percent of Bird Observations in HOLC Grade" = percent, # Rename percent
+  "HOLC Grade" = grade) %>% # Rename grade
+  kbl( # Call html format 
+  caption = "Summary of Bird Biodiversity Observations by HOLC Grade") %>% # Title
+  kable_styling() # Formatted borders
 ```
 
 ```{r}
