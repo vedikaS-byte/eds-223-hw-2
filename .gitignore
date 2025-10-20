@@ -1,7 +1,5 @@
 # Ignore data 
-data/ejscreen
-data/gbif-birds-LA
-data/mapping-inequality
+data/
 
 # History files
 .Rhistory
