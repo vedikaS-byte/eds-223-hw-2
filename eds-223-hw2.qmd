@@ -238,7 +238,7 @@ socioeconomic variables:
 holc_summary <- census_holc_df %>%
   group_by(grade) %>% 
   mutate(grade = ifelse(is.na(grade), "No HOLC grade", grade)) %>%
-  filter(grade != "No HOLC grade") %>% # Remove census blocks not within a HOLC grade
+  #filter(grade != "No HOLC grade") %>% # Remove census blocks not within a HOLC grade
   summarise( # Find the mean of each socioeconimic variable
     mean_low_income = mean(P_LOWINCPCT, na.rm = TRUE),
     mean_pm25 = mean(P_PM25, na.rm = TRUE),
@@ -251,38 +251,63 @@ holc_summary <- census_holc_df %>%
   ) 
 ```
 
-9.  Use ggplot to create a bar graph
+9.  Use `ggplot` to: (1) create a bar graph of the average value of each
+    socioeconomic variable among census block groups within a HOLC grade
+    and (2) visually summarize patterns between mean environmental and
+    socioeconomic variables for census blocks among HOLC grades.
 
 ```{r}
-#Bar graph to plot mean value for each variable by HOLC grade
+# Bar graph to plot mean value for each variable by HOLC grade
+# Rename levels 
+holc_summary$socio_economic <- factor(holc_summary$socio_economic, 
+ levels = c("mean_low_income", "mean_low_life_exp","mean_pm25"),
+ labels = c("Average Low Income", "Average Low Life Expectancy", 
+            "Average Particulate Matter Concentration (PM 2.5)"))
+
+# Define color palette
+grade_colors <- c("A" = "#2ca25f", # Best rank
+                  "B" = "#99d8c9",
+                  "C" = "#fec44f",
+                  "D" = "#de2d26") # Worst rank
+
+# Bar graph
 grade_avg_socio <- holc_summary %>% 
   ggplot(aes(x = grade, y = mean_value, fill = grade)) +
-  geom_col() + 
-  # 
-  facet_wrap(~ socio_economic, scales = "free_y") + 
+  geom_col(col = "black") + 
+  facet_wrap(~ socio_economic, scales = "free_y") + # Disable autoscaling
+  scale_fill_manual(values = grade_colors) +  # Apply palette
   labs(
-    x = "HOLC Grade",
-    y = "Mean Value",
-    title = "Mean EJScreen Indicators by HOLC Grade"
+    x = "HOLC Grade", 
+    y = "Average Percentage or Percentile",
+    title = "Mean Environmental Justice Indicators by HOLC Grade"
   ) +
-  theme_bw() + 
-  theme(legend.position = "none") 
+  theme_bw() + # Set theme
+  theme(legend.position = "none") # No legend
 
-# Store figure in figs
-gg_save(grade_avg_socio, "")
+grade_avg_socio
 
-# 
-# ggplot(holc_summary, aes(x = grade, y = mean_value, color = grade)) +
-#   geom_point(size = 3) +
-#   facet_wrap(~ variable, scales = "free_y") +
-#   labs(
-#     x = "HOLC Grade",
-#     y = "Mean Value",
-#     title = "Mean EJScreen Indicators by HOLC Grade"
-#   ) +
-#   theme_minimal() +
-#   theme(legend.position = "none")
+# Store graph in figs
+ggsave("figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png", grade_avg_socio)
+```
 
+```{r}
+# Heatmap of EJ indicators and associated average values by grade
+heatmap_holc <- holc_summary %>% 
+  ggplot(aes(x = socio_economic, y = grade, fill = mean_value)) +
+  geom_tile(col = "black") + # Set heatmap and borders
+  scale_fill_viridis_c(option = "C") + # Set color scale 
+  labs(
+    x = "Environmental Justice Indicator",
+    y = "HOLC Grade",
+    fill = "Mean Value",
+    title = "Mean Environmental Justice Indicators by HOLC Grade"
+  ) +
+  theme_minimal() # Set theme
+
+heatmap_holc 
+
+# Store graph in figs
+ggsave("figs/Heatmap_Mean_EJScreen_Indicators_by_HOLC_Grade.png", heatmap)
 ```
 
 Write a brief paragraph reflecting on these results. Interpret the
@@ -298,13 +323,12 @@ observations from 2021-2023:
 1.  A figure summarizing the percent of bird observations within
     redlined neighborhoods within each HOLC grade
 
-Create a visualizations that shows: - The percentage of bird
-observations within each HOLC grade
+Create a visualization that shows: - The percentage of bird observations
+within each HOLC grade
 
 ```{r}
 # Ensure in same CRS! 
 st_crs(birds) == st_crs(inequal) # Yes they match 
-
 
 # Perform spatial join to assign each bird observation to a HOLC grade polygon
 # st_intersects so points on borders are included in spatial 
@@ -312,7 +336,7 @@ birds_holc <- st_join(birds, inequal, join = st_intersects, left = FALSE)
 
 # Summarize % of bird observations by HOLC grade
 bird_summary <- birds_holc %>%
-  st_drop_geometry() %>% #
+  st_drop_geometry() %>% # 
   group_by(grade) %>%
   summarise(count = n()) %>%
   mutate(percent = round(100 * (count / sum(count)), 2),
@@ -340,11 +364,9 @@ bird_summary %>% ggplot(aes(x = grade, y = percent, fill = grade)) +
   theme_minimal() +
   theme(plot.title = element_text(face = "bold"))
 
-
-
 ```
 
--   Include an appropiate title, axis labels, and legend
+-   
 -   Hints: Ensure the bird observations and HOLC dataset have matching
     CRS’, then perform a spatial join to assign each bird observations
     to a corresponding HOLC grade.
