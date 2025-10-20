@@ -239,7 +239,7 @@ holc_summary <- census_holc_df %>%
   group_by(grade) %>% 
   mutate(grade = ifelse(is.na(grade), "No HOLC grade", grade)) %>%
   #filter(grade != "No HOLC grade") %>% # Remove census blocks not within a HOLC grade
-  summarise( # Find the mean of each socioeconimic variable
+  summarise( # Find the mean of each socioeconomic variable
     mean_low_income = mean(P_LOWINCPCT, na.rm = TRUE),
     mean_pm25 = mean(P_PM25, na.rm = TRUE),
     mean_low_life_exp = mean(P_LIFEEXPPCT, na.rm = TRUE)
@@ -287,7 +287,7 @@ grade_avg_socio <- holc_summary %>%
 grade_avg_socio
 
 # Store graph in figs
-ggsave("figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png", grade_avg_socio)
+ggsave("figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = grade_avg_socio)
 ```
 
 ```{r}
@@ -307,7 +307,7 @@ heatmap_holc <- holc_summary %>%
 heatmap_holc 
 
 # Store graph in figs
-ggsave("figs/Heatmap_Mean_EJScreen_Indicators_by_HOLC_Grade.png", heatmap)
+ggsave("figs/Heatmap_Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = heatmap_holc)
 ```
 
 Write a brief paragraph reflecting on these results. Interpret the
@@ -315,61 +315,67 @@ patterns you observe in your results. Discuss potential relationships
 between historical redlining grades and current
 environmental/socioeconomic conditions.
 
-## Part 2: Legacy of redlining in biodiversity observations
+It is noticeable that redlined communities with a grade of "D" ("worst"
+score)
 
-Description For this assignment, you must produce the following based on
-observations from 2021-2023:
+## Part 2: Legacy of Redlining in Biodiversity Observations
 
-1.  A figure summarizing the percent of bird observations within
-    redlined neighborhoods within each HOLC grade
+To examine the impact of historical redlining on urban biodiversity in
+Los Angeles, the proportion of bird observations within each HOLC grade
+from 2021-2023 was calculated and visualized with a bar graph.
 
-Create a visualization that shows: - The percentage of bird observations
-within each HOLC grade
+10. Ensure that the spatial objects `birds` and `inequal` are in the
+    same coordinate system.
 
 ```{r}
 # Ensure in same CRS! 
-st_crs(birds) == st_crs(inequal) # Yes they match 
+st_crs(birds) == st_crs(inequal) 
+```
 
-# Perform spatial join to assign each bird observation to a HOLC grade polygon
+11. Perform a spatial join to assign each bird observation to a HOLC
+    grade polygon. Both spatial datasets were joined with
+    `st_intersects` such that points (bird observations) on the borders
+    of HOLC polygons were also included.
+
+```{r}
+# Assign each bird observation to a HOLC grade polygon
 # st_intersects so points on borders are included in spatial 
 birds_holc <- st_join(birds, inequal, join = st_intersects, left = FALSE)
 
 # Summarize % of bird observations by HOLC grade
 bird_summary <- birds_holc %>%
-  st_drop_geometry() %>% # 
+  st_drop_geometry() %>%  
   group_by(grade) %>%
-  summarise(count = n()) %>%
-  mutate(percent = round(100 * (count / sum(count)), 2),
-         grade = factor(grade, levels = c("A","B","C","D"))) %>%
-  arrange(grade)
+  summarise(count = n()) %>% # Count observations per grade group
+# Calculate % of observations in each grade over the total observations 
+  mutate(percent = round(100 * (count / sum(count)), 2))
 
 print(bird_summary)
+```
 
-# Creat a pallete for each grade (% of bird observations per HOLC grade)
+```{r}
+# Create a pallete for each grade (% of bird observations per HOLC grade)
 grade_colors <- c("A" = "#2ca25f",
                   "B" = "#99d8c9",
                   "C" = "#fec44f",
                   "D" = "#de2d26")
 
-bird_summary %>% ggplot(aes(x = grade, y = percent, fill = grade)) +
-  geom_col(width = 0.7) +
-  geom_text(aes(label = paste0(percent, "%")), vjust = -0.5, size = 3.5) +
-  scale_fill_manual(values = grade_colors) +
+bird_summary %>% 
+  ggplot(aes(x = grade, y = percent, fill = grade)) +
+  geom_col() + 
+  geom_text( 
+    aes(label = paste0(percent, "%")), # Label bars with % observations in grades
+    vjust = -0.5, # Adjust position to be on top
+    size = 3) +
+  scale_fill_manual(values = grade_colors) + # Fill with palette
   labs(
-    title = "Percent of Bird Observations (2021–2023) within HOLC Grades",
+    title = "Percent of Bird Observations in Redlined Neighborhoods within HOLC Grades (2021–2023)",
     x = "HOLC Grade",
-    y = "Percent of Bird Observations",
-    caption = "Bird observations within Los Angeles HOLC neighborhoods (2021–2023)."
-  ) +
-  theme_minimal() +
-  theme(plot.title = element_text(face = "bold"))
+    y = "Percent of Bird Observations" ) +
+  theme_bw() 
 
 ```
 
--   
--   Hints: Ensure the bird observations and HOLC dataset have matching
-    CRS’, then perform a spatial join to assign each bird observations
-    to a corresponding HOLC grade.
 -   Spolier alert!! Our results don’t match the findings from Ellis-Soto
     et al. 2023! Read the abstract of the study. Why might we have
     obtained different results in our analysis? What did the paper

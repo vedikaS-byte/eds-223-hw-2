@@ -10,10 +10,26 @@ residents (Data USA, n.d.). The city has a rich history and is
 culturally diverse; however, marginalized communities continue to face
 disproportionate environmental, social, and economic burdens.
 
+Purpose
+
+This repository contains:
+
+- 
+
+
 
 ## Data Access
 - EJ 
 - HOLC Grade (where from, access, keep it short)
 - Birds (where from, access)
+
+
+All datasets were provided for EDS 223 as a class for the MEDS program at the Bren School of Environmental Science and Management, UC Santa Barbara.
+
+
+
+
+## Author Contributors
+This repository was assessmvled adn this Credit 
 
 
