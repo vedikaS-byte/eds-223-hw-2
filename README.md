@@ -9,3 +9,11 @@ Hispanic residents, 1.4 million Asian residents, and 743,000 Black
 residents (Data USA, n.d.). The city has a rich history and is
 culturally diverse; however, marginalized communities continue to face
 disproportionate environmental, social, and economic burdens.
+
+
+## Data Access
+- EJ 
+- HOLC Grade (where from, access, keep it short)
+- Birds (where from, access)
+
+

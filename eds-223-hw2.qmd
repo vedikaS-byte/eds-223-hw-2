@@ -19,7 +19,14 @@ editor_options:
 
 ## Primary Objective
 
-With an estimated 9.8 million residents in 2023, Los Angeles County is the most populous county in California and the entire United States (Data USA, n.d.). Los Angeles County is also racially diverse, with approximately 2.48 million White (non-Hispanic) residents, 2.26 million Hispanic residents, 1.4 million Asian residents, and 743,000 Black residents (Data USA, n.d.). The city has a rich history and is culturally diverse; however, marginalized communities continue to face disproportionate environmental, social, and economic burdens.
+With an estimated 9.8 million residents in 2023, Los Angeles County is
+the most populous county in California and the entire United States
+(Data USA, n.d.). Los Angeles County is also racially diverse, with
+approximately 2.48 million White (non-Hispanic) residents, 2.26 million
+Hispanic residents, 1.4 million Asian residents, and 743,000 Black
+residents (Data USA, n.d.). The city has a rich history and is
+culturally diverse; however, marginalized communities continue to face
+disproportionate environmental, social, and economic burdens.
 
 Environmental injustices experienced by marginalized communities are
 interconnected with patterns of reduced biodiversity in urban
@@ -71,10 +78,14 @@ library(kableExtra) # Load "kableExtra" for table formatting
 ```{r}
 #| output: false
 # Load in the data using st_read()
+
+# Environmental injustice data from EJSCREEN
 ej_screen <- st_read(here::here("data","ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
 
+# Bird observations
 birds <- st_read(here::here("data","gbif-birds-LA", "gbif-birds-LA.shp"))
 
+# HOLC inequality data
 inequal <- st_read(here::here("data","mapping-inequality", "mapping-inequality-los-angeles.json"))
 ```
 
@@ -84,62 +95,65 @@ A map was created to visualize historical redlining in Los Angeles and
 its legacy on present-day environmental justice.
 
 3.  Ensure that all spatial objects are in the same coordinate reference
-    system (CRS) using st_crs(). Spatial objects were transformed to
-    match the same CRS as ej_screen using
+    system (CRS) using `st_crs()`. Spatial objects were transformed to
+    match the same CRS as `ej_screen` using `st_transform()`, and
+    boolean checks were run to ensure the CRS matched for each spatial
+    object.
 
 ```{r}
 # Check CRS for all
-st_crs(ej_screen) # WGS 84 / Pseudo-Mercator 
-st_crs(birds)  # WGS 84 
-st_crs(inequal) # WGS 84 
+st_crs(ej_screen)$Name # WGS 84 / Pseudo-Mercator 
+st_crs(birds)$Name  # WGS 84 
+st_crs(inequal)$Name # WGS 84 
+```
 
+```{r}
 # Transform to match same CRS as ej_screen
 birds <- st_transform(birds, st_crs(ej_screen))
 inequal <- st_transform(inequal, st_crs(ej_screen))
 
 # Double check to ensure all match
 st_crs(ej_screen) == st_crs(birds)
-st_crs(ej_screen) == st_crs()
+st_crs(ej_screen) == st_crs(inequal)
+st_crs(birds) == st_crs(inequal)
 ```
 
 ### Map of Historical Redlining in Los Angeles (HOLC)
 
-Description For this assignment, you must complete the following:
-
-1.  Create a map of historical redlining neighborhoods, including:
-
--   neighborhoods colored by HOLC grade an appropriate base map
--   a clear title and legend
+4.  Create a map for neighborhoods colored by HOLC grade with an
+    appropriate base map using functions in `tmap`. A format for the
+    base map was selected from an extension of
+    [Leaflet](https://github.com/leaflet-extras/leaflet-providers?tab=readme-ov-file)
+    and used with `tm_tiles()`.
 
 ```{r}
-# Create a map of historical redlining neighborhoods, including:
-# - neighborhoods colored by HOLC grade 
-# - an appropriate base map 
-# - a clear title and legend 
-map1 <- tm_shape(inequal) +
-  tm_tiles("CartoDB.Positron") + #Establish a basemap with tm_tiles using a view from https://leaflet-extras.github.io/leaflet-providers/preview/
+map1 <- tm_shape(inequal) + # Call spatial data source
+  tm_tiles("CartoDB.Positron") + #Establish basemap with tm_tiles using a view from Leaflet
   tm_polygons(
-    col = "grade",
-    palette = "brewer.Reds",
-    alpha = 0.7,                      
-    border.col = "black",
-    title = "HOLC Grade")   +
-  tm_compass(position = c("left", "top")) +
-  tm_scalebar(position = c("left", "bottom")) +
-  tm_graticules() +
-  tm_layout(
+    col = "grade", # Color by HOLC grade
+    palette = "brewer.Reds", # Utilize color palette
+    alpha = 0.7, # Adjust transparency                      
+    border.col = "black", # Border of graded neighborhoods
+    title = "HOLC Grade")   + # Title of legend
+  tm_compass(position = c("left", "top")) + # Compass
+  tm_scalebar(position = c("left", "bottom")) + # Adjust placement of scale bar
+  tm_graticules( # Add graticules to establish latitude and longitude network
+    col = "black",
+    lwd = 0.3, # Establish "thickness" of lines
+    alpha = 0.6 ) +  # Specify transparency 
+  tm_layout( # Center title outside bounding box
     main.title = "Historical Redlining in Los Angeles (HOLC)", 
     title.size = 1,
-    #outer.margins = c(0.1, 0.05, 0.05, 0.05),
-    legend.outside = TRUE,
+    legend.outside = TRUE, # Place legend outside map frame
     legend.outside.position = "right",
-    component.autoscale = FALSE
+    component.autoscale = FALSE # Disable autoscaling for title
   )
 
+# Store in variable for reproducibility
 map1
 
+# Save map to figs
 tmap_save(map1, "figs/LA_HOC.png")
-
 ```
 
 ### Summary Table of Census Block Groups Inside or Outside HOLC Grade
