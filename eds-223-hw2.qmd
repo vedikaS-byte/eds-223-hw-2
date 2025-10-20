@@ -80,7 +80,8 @@ library(kableExtra) # Load "kableExtra" for table formatting
 # Load in the data using st_read()
 
 # Environmental injustice data from EJSCREEN
-ej_screen <- st_read(here::here("data","ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
+ej_screen <- st_read(here::here("data","ejscreen", 
+                                "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
 
 # Bird observations
 birds <- st_read(here::here("data","gbif-birds-LA", "gbif-birds-LA.shp"))
@@ -129,7 +130,7 @@ st_crs(birds) == st_crs(inequal)
 ```{r}
 
 map1 <- tm_shape(inequal) + # Call spatial data source
-  tm_tiles("CartoDB.Positron") + #Establish basemap with tm_tiles using a view from Leaflet
+  tm_tiles("CartoDB.Positron") + # Establish basemap with tm_tiles using a view from Leaflet
   tm_polygons(
     col = "grade", # Color by HOLC grade
     palette = "reds", # Utilize color palette
@@ -159,6 +160,10 @@ tmap_save(map1, "figs/LA_HOC.png")
 ```
 
 ![](figs/LA_HOC.png)
+
+***Figure 1. Finalized map of census blocks within or located outside a
+HOLC graded redlined area. Areas graded “A” (light red) were considered
+“safe,” while those graded “D” (dark red) were considered “unsafe.”***
 
 ### Summary Table of Census Block Groups Inside or Outside HOLC Grade
 
@@ -368,7 +373,7 @@ print(bird_summary)
 ```
 
 ```{r}
-# Create a pallete for each grade (% of bird observations per HOLC grade)
+# Redefine a pallete for each grade (% of bird observations per HOLC grade)
 grade_colors <- c("A" = "#2ca25f",
                   "B" = "#99d8c9",
                   "C" = "#fec44f",
@@ -389,6 +394,9 @@ bird_summary %>%
   theme_bw() 
 
 ```
+
+Interestingly, areas graded “C” accounted for the largest share of bird
+biodiversity observations at 35.36% while areas graded "B" where
 
 -   Spolier alert!! Our results don’t match the findings from Ellis-Soto
     et al. 2023! Read the abstract of the study. Why might we have

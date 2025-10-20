@@ -35,3 +35,19 @@ The [Global Biodiversity Information Facility](https://eds-223-geospatial.github
 This repository and analysis was compiled by Vedika Shirtekar. All datasets and assignment instructions were provided by The Bren School of Environmental Science and Management, UC Santa Barbara for the MEDS program.
 
 ## Citations
+
+Connolly, N. D. B., Winling, L., Nelson, R. K., & Marciano, R. (2018). Mapping inequality. In The Routledge Companion to Spatial History (pp. 502–524). Routledge. <https://doi.org/10.4324/9781315099781-29>
+
+Definition of redlining. (n.d.). Merriam-Webster Legal. Retrieved October 19, 2025, from <https://www.merriam-webster.com/legal/redlining>
+
+Ellis-Soto, D., Chapman, M., & Locke, D. H. (2023). Historical redlining is associated with increasing geographical disparities in bird biodiversity sampling in the United States. Nature Human Behaviour, 7(11), 1869–1877. <https://doi.org/10.1038/s41562-023-01688-5>
+
+Hoffman, J. S., Shandas, V., & Pendleton, N. (2020). The effects of historical housing policies on resident exposure to intra-urban heat: A study of 108 US urban areas. Climate, 8(1), 12. <https://doi.org/10.3390/cli8010012>
+
+Leaflet provider demo. (n.d.). Retrieved October 19, 2025, from <https://leaflet-extras.github.io/leaflet-providers/preview/>
+
+Los angeles county, CA. (n.d.). Data USA. Retrieved October 19, 2025, from <https://datausa.io/profile/geo/los-angeles-county-ca>
+
+Mapping inequality. (n.d.). Retrieved October 19, 2025, from <https://dsl.richmond.edu/panorama/redlining/#loc=5/39.1/-94.58&text=downloads>
+
+Oliver, R. (n.d.). Homework assignment 2. Retrieved October 19, 2025, from <https://eds-223-geospatial.github.io/assignments/HW2.html>
