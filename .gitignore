@@ -1,6 +1,8 @@
 # Ignore data 
-data/ 
-*.tif
+data/*
+
+# Keep all data folders visible
+!data/.gitkeep
 
 # History files
 .Rhistory
