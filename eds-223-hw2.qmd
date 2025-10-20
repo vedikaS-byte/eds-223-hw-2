@@ -158,6 +158,8 @@ map1
 tmap_save(map1, "figs/LA_HOC.png")
 ```
 
+![](figs/LA_HOC.png)
+
 ### Summary Table of Census Block Groups Inside or Outside HOLC Grade
 
 To evaluate patterns of enviornmental injustice, a summary table was
@@ -317,7 +319,11 @@ environmental/socioeconomic conditions.
 
 It is noticeable that redlined communities with a grade of "D" ("worst"
 score) have the highest average percentage of low income households
-exposed to the highest average
+exposed to the highest average percentile of particulate matter with the
+lowest average life expectancy. Communities rated "A" ("best" score),
+however, have the lowest average percentage of low income households
+exposed to the least average percentile of particulate matter with the
+highest average life expectancy.
 
 ## Part 2: Legacy of Redlining in Biodiversity Observations
 
