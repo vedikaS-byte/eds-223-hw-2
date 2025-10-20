@@ -48,8 +48,8 @@ to establish a baseline for conservation efforts in urban environments.
 The goal of this analysis is to examine the impacts of historical
 redlining on marginalized communities and biodiversity in Los Angeles
 (LA) using census block data, a HOLC grading map of LA, and bird
-observation records. The following research question guided this
-analysis:
+observation records. Detailed descriptions of each dataset can be found
+in the README. The following research question guided this analysis:
 
 **To what extent has historical redlining in Los Angeles contributed to
 current disparities in environmental quality and urban biodiversity?**
@@ -316,7 +316,8 @@ between historical redlining grades and current
 environmental/socioeconomic conditions.
 
 It is noticeable that redlined communities with a grade of "D" ("worst"
-score)
+score) have the highest average percentage of low income households
+exposed to the highest average
 
 ## Part 2: Legacy of Redlining in Biodiversity Observations
 
