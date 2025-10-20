@@ -162,7 +162,7 @@ tmap_save(map1, "figs/LA_HOC.png")
 
 ### Summary Table of Census Block Groups Inside or Outside HOLC Grade
 
-To evaluate patterns of enviornmental injustice, a summary table was
+To evaluate patterns of environmental injustice, a summary table was
 created showing the proportion of census block groups that do and do not
 fall within each HOLC grade.
 
@@ -312,18 +312,25 @@ heatmap_holc
 ggsave("figs/Heatmap_Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = heatmap_holc)
 ```
 
-Write a brief paragraph reflecting on these results. Interpret the
-patterns you observe in your results. Discuss potential relationships
-between historical redlining grades and current
-environmental/socioeconomic conditions.
-
 It is noticeable that redlined communities with a grade of "D" ("worst"
 score) have the highest average percentage of low income households
 exposed to the highest average percentile of particulate matter with the
 lowest average life expectancy. Communities rated "A" ("best" score),
 however, have the lowest average percentage of low income households
 exposed to the least average percentile of particulate matter with the
-highest average life expectancy.
+highest average life expectancy. There are about 449 census blocks
+within "A" grade neighborhoods and 3,058 census blocks within "C" grade
+neighborhoods. Additionally, about 2,896 census blocks (32.22%) lack a
+HOLC grade, indicating gaps in coverage, areas excluded from the
+original mapping, or shifts in boundaries overtime. Census blocks rated
+“C” or “D” are historically labeled as “unsafe” and now outnumber areas
+graded “A” or “B.” This imbalance suggests uneven patterns of urban and
+human development, with “C” and “D” areas experiencing greater exposure
+to air pollution and potentially higher environmental health risks,
+resulting in lower life expectancy. These conditions may also contribute
+to higher crime rates in lower-graded neighborhoods, especially given
+the larger proportion of low-income households; however, this
+relationship requires further analysis.
 
 ## Part 2: Legacy of Redlining in Biodiversity Observations
 
