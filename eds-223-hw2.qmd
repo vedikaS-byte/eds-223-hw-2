@@ -298,6 +298,12 @@ grade_avg_socio
 #ggsave("figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = grade_avg_socio)
 ```
 
+![](figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png)
+
+***Figure 2. Finalized graph of mean percentile of environmental justice
+indicators for census blocks within or located outside a HOLC graded
+redlined area.***
+
 ```{r}
 # Heatmap of EJ indicators and associated average values by grade
 heatmap_holc <- holc_summary %>% 
@@ -318,6 +324,12 @@ heatmap_holc
 # Store graph in figs
 #ggsave("figs/Heatmap_Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = heatmap_holc)
 ```
+
+![](figs/Heatmap_Mean_EJScreen_Indicators_by_HOLC_Grade.png)
+
+***Figure 3. Finalized heatmap of mean percentile of environmental
+justice indicators based on census blocks within or located outside a
+HOLC graded redlined area.***
 
 It is noticeable that redlined communities with a grade of "D" ("worst"
 score) have the highest average percentage of low income households
