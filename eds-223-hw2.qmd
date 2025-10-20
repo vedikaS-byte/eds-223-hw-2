@@ -222,7 +222,11 @@ census_summary <- census_holc_df %>%
 ```{r}
 # Format output as table
 census_summary %>% 
-  kbl() %>% # Call html format
+  rename("Count of Census Blocks" = count, # Rename count
+  "Percent of Census Blocks in HOLC Grade" = percent, # Rename percent
+  "HOLC Grade" = grade) %>% # Rename grade
+  kbl( # Call html format 
+  caption = "Summary of Census Blocks by HOLC Grade") %>% # Title
   kable_styling() # Formatted borders
 ```
 
