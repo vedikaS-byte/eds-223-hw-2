@@ -2,6 +2,8 @@
 data/ejscreen
 data/gbif-birds-LA
 data/mapping-inequality
+data/.DS_Store
+data/.gitkeep
 
 # History files
 .Rhistory
