@@ -1,6 +1,5 @@
 # Ignore data 
 data/
-*.gdb
 *.tif
 
 # History files
