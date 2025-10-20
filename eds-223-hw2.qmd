@@ -127,11 +127,13 @@ st_crs(birds) == st_crs(inequal)
     and used with `tm_tiles()`.
 
 ```{r}
+
 map1 <- tm_shape(inequal) + # Call spatial data source
   tm_tiles("CartoDB.Positron") + #Establish basemap with tm_tiles using a view from Leaflet
   tm_polygons(
     col = "grade", # Color by HOLC grade
-    palette = "brewer.Reds", # Utilize color palette
+    palette = "reds", # Utilize color palette
+    na.color = "grey",
     alpha = 0.7, # Adjust transparency                      
     border.col = "black", # Border of graded neighborhoods
     title = "HOLC Grade")   + # Title of legend
@@ -191,8 +193,8 @@ census_holc_df <- st_drop_geometry(census_holc)
 7.  Summarize the percentage of census blocks in or outside a HOLC
     grade. Format the proportions as a table using
     [functions](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html)
-    in kableExtra. "NA" values stored as HOLC grades are interpreted as
-    a census blocks not covered by the historical redlining map; the
+    in `kableExtra`. "NA" values stored as HOLC grades are interpreted
+    as a census block not covered by the historical redlining map; the
     census block falls outside HOLC mapped areas.
 
 ```{r}
@@ -216,41 +218,48 @@ census_summary %>%
   kable_styling() # Formatted borders
 ```
 
-### Visualizing Current Environmental Justice Conditions in Redlined LA Communties
+### Visualizing Current Environmental Justice Conditions in Redlined LA Communities
 
-To
+Two graphs were created to visualize current environmental conditions
+(`ej_la`) within HOLC grades based on the average of the following
+socioeconomic variables:
 
-3.  Create at least two visualizations summarizing current conditions
-    (from the EJScreen data) within HOLC grades using the mean of the
-    following variables (you may combine variables or create separate
-    plots):
+-   Percent low income
 
--   \% low income
--   percentile for Particulate Matter 2.5
--   percentile for low life expectancy -Use ggplot for your
-    visualizations! You will first need to calculate mean of each
-    variable grouped by HOLC grade.
+-   Percentile for Particulate Matter 2.5
+
+-   Percentile for low life expectancy
+
+8.  Calculate the mean of each socioeconomic variable grouped by HOLC
+    grade. Create a singular column for socioeconomic variables to
+    visually compare each average among HOLC grades.
 
 ```{r}
 holc_summary <- census_holc_df %>%
   group_by(grade) %>% 
   mutate(grade = ifelse(is.na(grade), "No HOLC grade", grade)) %>%
-  filter(grade != "No HOLC grade") %>%
-  summarise(
+  filter(grade != "No HOLC grade") %>% # Remove census blocks not within a HOLC grade
+  summarise( # Find the mean of each socioeconimic variable
     mean_low_income = mean(P_LOWINCPCT, na.rm = TRUE),
     mean_pm25 = mean(P_PM25, na.rm = TRUE),
     mean_low_life_exp = mean(P_LIFEEXPPCT, na.rm = TRUE)
-  ) %>%
-  pivot_longer(
-    cols = starts_with("mean_"),
-    names_to = "socio_economic",
-    values_to = "mean_value"
+  ) %>% 
+  pivot_longer(  
+    cols = starts_with("mean_"), # Grab desired columns
+    names_to = "socio_economic", # Socioeconimic variable with three levels
+    values_to = "mean_value" # Associated average value
   ) 
+```
 
-# bar plot: mean value for each variable by HOLC grade
-holc_summary %>% ggplot(aes(x = grade, y = mean_value, fill = grade)) +
-  geom_col() +
-  facet_wrap(~ socio_economic, scales = "free_y") +
+9.  Use ggplot to create a bar graph
+
+```{r}
+#Bar graph to plot mean value for each variable by HOLC grade
+grade_avg_socio <- holc_summary %>% 
+  ggplot(aes(x = grade, y = mean_value, fill = grade)) +
+  geom_col() + 
+  # 
+  facet_wrap(~ socio_economic, scales = "free_y") + 
   labs(
     x = "HOLC Grade",
     y = "Mean Value",
@@ -258,6 +267,9 @@ holc_summary %>% ggplot(aes(x = grade, y = mean_value, fill = grade)) +
   ) +
   theme_bw() + 
   theme(legend.position = "none") 
+
+# Store figure in figs
+gg_save(grade_avg_socio, "")
 
 # 
 # ggplot(holc_summary, aes(x = grade, y = mean_value, color = grade)) +
@@ -309,7 +321,7 @@ bird_summary <- birds_holc %>%
 
 print(bird_summary)
 
-# creat a pallete for each grade (percent of bird observations per HOLC grade)
+# Creat a pallete for each grade (% of bird observations per HOLC grade)
 grade_colors <- c("A" = "#2ca25f",
                   "B" = "#99d8c9",
                   "C" = "#fec44f",
