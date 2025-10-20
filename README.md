@@ -12,8 +12,6 @@ This repository contains:
 
 -   `README`: Description of repository, brief summary of purpose of analysis, and data references.
 
--   `data`: Contains EJScreen geodatabase and associated metadata, biodiversity observations from the Global Biodiversity Information Facility, and HOLC inequality data from the Digital Scholarship Lab.
-
 -   `eds-223-hw2.qmd`: Primary `qmd` document detailing analysis.
 
 -   `eds-223-hw2.pdf`: A rendered pdf version of analysis.
@@ -21,6 +19,8 @@ This repository contains:
 -   `figs`: Contains finalized versions of figures.
 
 -   `.gitignore`: Contain files ignored for ease of updating repository (ie. ignore data).
+
+    -   `data`: Contains EJScreen geodatabase and associated metadata, biodiversity observations from the Global Biodiversity Information Facility, and HOLC inequality data from the Digital Scholarship Lab.
 
 ## Data Description and Access
 
