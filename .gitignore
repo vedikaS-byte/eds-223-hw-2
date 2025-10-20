@@ -1,5 +1,7 @@
 # Ignore data 
-data/
+data/ejscreen/
+*.gdb
+*.tif
 
 # History files
 .Rhistory
