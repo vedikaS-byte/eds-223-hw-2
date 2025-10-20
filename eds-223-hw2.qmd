@@ -59,7 +59,7 @@ current disparities in environmental quality and urban biodiversity?**
 1.  Load the appropriate packages for the analysis.
 
 ```{r}
-#| include: false
+#| output: false
 # Import packages
 library(here) # Load "here" to locate and reference files
 library(tidyverse) # Load the tidyverse" for data cleaning
@@ -419,11 +419,16 @@ bird_summary %>%
     size = 3) +
   scale_fill_manual(values = grade_colors) + # Fill with palette
   labs(
-title = "Percent of Bird Observations in Redlined Neighborhoods within HOLC Grades (2021–2023)",
+title = "Percent of Bird Observations in Redlined Neighborhoods Within HOLC Grades (2021–2023)",
     x = "HOLC Grade",
     y = "Percent of Bird Observations" ) +
   theme_bw() 
 ```
+
+![](figs/Percent of Bird Observations in Redlined Neighborhoods Within HOLC Grades.png)
+
+***Figure 4. Finalized bar graph of percent bird observations made in
+redlined neighborhoods per HOLC grade.***
 
 Interestingly, areas graded “C” accounted for the largest share of bird
 biodiversity observations at 35.36% while areas graded "B" had the
