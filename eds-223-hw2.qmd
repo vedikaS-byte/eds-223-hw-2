@@ -91,6 +91,11 @@ inequal <- st_read(here::here("data","mapping-inequality",
                               "mapping-inequality-los-angeles.json"))
 ```
 
+```{r}
+## stop and warning
+
+```
+
 ## Part 1: Legacy of Redlining in Current Environmental Injustice
 
 A map was created to visualize historical redlining in Los Angeles and
@@ -107,6 +112,8 @@ its legacy on present-day environmental justice.
 st_crs(ej_screen)$Name # WGS 84 / Pseudo-Mercator 
 st_crs(birds)$Name  # WGS 84 
 st_crs(inequal)$Name # WGS 84 
+# transform before stop()
+# stop() within if statement to compare birds and map ineq
 ```
 
 ```{r}
@@ -129,13 +136,12 @@ st_crs(birds) == st_crs(inequal)
     and used with `tm_tiles()`.
 
 ```{r}
-
 map1 <- tm_shape(inequal) + # Call spatial data source
 # Establish basemap with tm_tiles using view from Leaflet
   tm_tiles("CartoDB.Positron") + 
   tm_polygons(
     col = "grade", # Color by HOLC grade
-    palette = "reds", # Utilize color palette
+    palette = c("darkgreen", "darkblue", "darkorange","darkred"), # Utilize color palette
     na.color = "grey",
     alpha = 0.7, # Adjust transparency                      
     border.col = "black", # Border of graded neighborhoods
@@ -277,10 +283,12 @@ holc_summary$socio_economic <- factor(holc_summary$socio_economic,
             "Average Particulate Matter Concentration (PM 2.5)"))
 
 # Define color palette
-grade_colors <- c("A" = "#2ca25f", # Best rank
-                  "B" = "#99d8c9",
-                  "C" = "#fec44f",
-                  "D" = "#de2d26") # Worst rank
+grade_colors <- c("A" = "#76a865", # Best rank
+                  "B" = "#7cb5bd",
+                  "C" = "#ffff00",
+                  "D" = "#d9838d") # Worst rank
+
+
 
 # Bar graph
 grade_avg_socio <- holc_summary %>% 
@@ -293,13 +301,12 @@ grade_avg_socio <- holc_summary %>%
     y = "Average Percentage or Percentile",
     title = "Mean Environmental Justice Indicators by HOLC Grade"
   ) +
-  theme_bw() + # Set theme
-  theme(legend.position = "none") # No legend
-
+  theme_bw()  # Set theme
+  
 grade_avg_socio
 
 # Store graph in figs
-#ggsave("figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = grade_avg_socio)
+ggsave("figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = grade_avg_socio)
 ```
 
 ![](figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png)
@@ -366,7 +373,7 @@ from 2021-2023 was calculated and visualized with a bar graph.
 
 ```{r}
 # Ensure in same CRS! 
-st_crs(birds) == st_crs(inequal) 
+st_crs(birds) == st_crs(inequal)  
 ```
 
 11. Perform a spatial join to assign each bird observation to a HOLC
@@ -425,7 +432,7 @@ title = "Percent of Bird Observations in Redlined Neighborhoods Within HOLC Grad
   theme_bw() 
 ```
 
-![](figs/Percent of Bird Observations in Redlined Neighborhoods Within HOLC Grades.png)
+![](figs/Percent%20of%20Bird%20Observations%20in%20Redlined%20Neighborhoods%20Within%20HOLC%20Grades.png)
 
 ***Figure 4. Finalized bar graph of percent bird observations made in
 redlined neighborhoods per HOLC grade.***
