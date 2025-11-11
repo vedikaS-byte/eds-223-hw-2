@@ -5,9 +5,6 @@ date: "10/19/2025"
 format:
   pdf: 
     code-fold: false
-execute: 
-  warning: false
-  message: false
 editor: 
   markdown: 
     wrap: 72
@@ -112,7 +109,9 @@ if (st_crs(ej_screen) == st_crs(birds)) {
   warning("CRS mismatch: Transform birds to match ej_screen.")
   birds <- st_transform(birds, st_crs(ej_screen))
 }
+```
 
+```{r}
 # Compare ej_screen and inequal
 if (st_crs(ej_screen) == st_crs(inequal)) {
   message("CRS match: ej_screen and inequal.")
@@ -120,7 +119,9 @@ if (st_crs(ej_screen) == st_crs(inequal)) {
   warning("CRS mismatch: Transform inequal to match ej_screen.")
   inequal <- st_transform(inequal, st_crs(ej_screen))
 }
+```
 
+```{r}
 # Compare birds and inequal, include stop() if still no match
 if (st_crs(birds) == st_crs(inequal)) {
   message("Final check: CRS match between birds and inequal.")
@@ -129,7 +130,6 @@ if (st_crs(birds) == st_crs(inequal)) {
        Double check transformations for matching CRS 
        between spatial objects!")
 }
-
 ```
 
 ### Map of Historical Redlining in Los Angeles (HOLC)
@@ -141,7 +141,9 @@ if (st_crs(birds) == st_crs(inequal)) {
     and used with `tm_tiles()`.
 
 ```{r}
-# Create a custom color palette that matches the actual HOLC grade
+#| warning: false
+#| message: false
+#Create a custom color palette that matches the actual HOLC grade
 grade_colors <- c("A" = "#2ca25f", # "Best" Rank
                   "B" = "#99d8c9",
                   "C" = "#fec44f",
@@ -445,6 +447,8 @@ bird_summary %>%
 ```
 
 ```{r}
+#| warning: false
+#| message: false
 bird_summary %>% 
   ggplot(aes(x = grade, y = percent, fill = grade)) +
   geom_col() + 
