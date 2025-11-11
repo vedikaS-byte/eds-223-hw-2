@@ -103,25 +103,33 @@ its legacy on present-day environmental justice.
     object.
 
 ```{r}
-# Check CRS for all
+# Check and match CRS for all
 
-st_crs(ej_screen)$Name # WGS 84 / Pseudo-Mercator 
-st_crs(birds)$Name  # WGS 84 
-st_crs(inequal)$Name # WGS 84 
-# transform before stop()
-# stop() within if statement to compare birds and map ineq
+# Compare ej_screen and birds
+if (st_crs(ej_screen) == st_crs(birds)) {
+  message("CRS match: ej_screen and birds.")
+} else {
+  warning("CRS mismatch: Transform birds to match ej_screen.")
+  birds <- st_transform(birds, st_crs(ej_screen))
+}
+
+# Compare ej_screen and inequal
+if (st_crs(ej_screen) == st_crs(inequal)) {
+  message("CRS match: ej_screen and inequal.")
+} else {
+  warning("CRS mismatch: Transform inequal to match ej_screen.")
+  inequal <- st_transform(inequal, st_crs(ej_screen))
+}
+
+# Compare birds and inequal, include stop() if still no match
+if (st_crs(birds) == st_crs(inequal)) {
+  message("Final check: CRS match between birds and inequal.")
+} else {
+  stop("CRS mismatch between birds and inequal: Double check transformations for matching CRS between spatial objects!")
+}
+
 ```
 
-```{r}
-# Transform to match same CRS as ej_screen
-birds <- st_transform(birds, st_crs(ej_screen))
-inequal <- st_transform(inequal, st_crs(ej_screen))
-
-# Double check to ensure all match
-st_crs(ej_screen) == st_crs(birds)
-st_crs(ej_screen) == st_crs(inequal)
-st_crs(birds) == st_crs(inequal)
-```
 
 ### Map of Historical Redlining in Los Angeles (HOLC)
 
@@ -284,7 +292,7 @@ holc_summary$socio_economic <- factor(holc_summary$socio_economic,
  labels = c("Average Low Income", "Average Low Life Expectancy", 
             "Average Particulate Matter Concentration (PM 2.5)"))
 
-# Define color palette
+# Redefine color palette
 grade_colors <- c("A" = "#76a865", # Best rank
                   "B" = "#7cb5bd",
                   "C" = "#ffff00",
@@ -313,7 +321,7 @@ ggsave("figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = grade_avg_socio
 
 ![](figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png)
 
-***Figure 2. Finalized graph of mean percentile of environmental justice
+***Figure 1. Finalized graph of mean percentile of environmental justice
 indicators for census blocks within or located outside a HOLC graded
 redlined area.***
 
