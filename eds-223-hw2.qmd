@@ -91,11 +91,6 @@ inequal <- st_read(here::here("data","mapping-inequality",
                               "mapping-inequality-los-angeles.json"))
 ```
 
-```{r}
-## stop and warning
-
-```
-
 ## Part 1: Legacy of Redlining in Current Environmental Injustice
 
 A map was created to visualize historical redlining in Los Angeles and
@@ -109,6 +104,7 @@ its legacy on present-day environmental justice.
 
 ```{r}
 # Check CRS for all
+
 st_crs(ej_screen)$Name # WGS 84 / Pseudo-Mercator 
 st_crs(birds)$Name  # WGS 84 
 st_crs(inequal)$Name # WGS 84 
@@ -136,12 +132,18 @@ st_crs(birds) == st_crs(inequal)
     and used with `tm_tiles()`.
 
 ```{r}
+# Create a custom color palette that matches the actual HOLC grade
+grade_colors <- c("A" = "#2ca25f",
+                  "B" = "#99d8c9",
+                  "C" = "#fec44f",
+                  "D" = "#de2d26")
+
 map1 <- tm_shape(inequal) + # Call spatial data source
 # Establish basemap with tm_tiles using view from Leaflet
   tm_tiles("CartoDB.Positron") + 
   tm_polygons(
     col = "grade", # Color by HOLC grade
-    palette = c("darkgreen", "darkblue", "darkorange","darkred"), # Utilize color palette
+    palette = grade_colors, # Utilize color palette
     na.color = "grey",
     alpha = 0.7, # Adjust transparency                      
     border.col = "black", # Border of graded neighborhoods
@@ -373,7 +375,7 @@ from 2021-2023 was calculated and visualized with a bar graph.
 
 ```{r}
 # Ensure in same CRS! 
-st_crs(birds) == st_crs(inequal)  
+st_crs(birds) == st_crs(inequal) 
 ```
 
 11. Perform a spatial join to assign each bird observation to a HOLC
