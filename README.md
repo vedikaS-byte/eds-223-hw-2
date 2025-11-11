@@ -8,38 +8,28 @@ Environmental injustices experienced by marginalized communities are interconnec
 
 The purpose of this analysis is to examine how historical redlining in Los Angeles has influenced communities in terms of environmental and socioeconomic conditions. Additionally, the analysis investigates how biodiversity, measured by recorded bird observations, is affected in historically redlined neighborhoods.
 
+## Directory Contents
 
-```
+This repository contains:
+
+```         
 EDS223-HW2
 │   README.md
 │   eds-223-hw2.qmd
-│   Rmd/Proj files    
+│   eds-223-hw2.pdf
+│   eds-223-hw-2.Rproj
 │   figs
- ├── Heatmap_Mean_EJScreen_Indicators_by_HOLC_Grade.png
-│   ├── LA_HOC.png
-│   ├── Mean_EJScreen_Indicators_by_HOLC_Grade.png
-│   └── Percent of Bird Observations in Redlined Neighborhoods Within HOLC Grades.png
+│   └───Heatmap_Mean_EJScreen_Indicators_by_HOLC_Grade.png
+│   └───LA_HOC.png
+│   └───Mean_EJScreen_Indicators_by_HOLC_Grade.png
+│   └───Percent of Bird Observations in Redlined Neighborhoods Within HOLC Grades.png
+│
 └───.gitignore
      └───data
          └───ejscreen
          └───gbif-birds-LA
          └───mapping-inequality
 ```
-
-
-This repository contains:
-
--   `README`: Description of repository, brief summary of purpose of analysis, and data references.
-
--   `eds-223-hw2.qmd`: Primary `qmd` document detailing analysis.
-
--   `eds-223-hw2.pdf`: A rendered pdf version of analysis.
-
--   `figs`: Contains finalized versions of figures.
-
--   `.gitignore`: Contain files ignored for ease of updating repository (ie. ignore data).
-
--   `data`: Contains EJScreen geodatabase and associated metadata, biodiversity observations from the Global Biodiversity Information Facility, and HOLC inequality data from the Digital Scholarship Lab.
 
 ## Data Description and Access
 
