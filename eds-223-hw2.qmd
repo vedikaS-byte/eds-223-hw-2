@@ -125,11 +125,12 @@ if (st_crs(ej_screen) == st_crs(inequal)) {
 if (st_crs(birds) == st_crs(inequal)) {
   message("Final check: CRS match between birds and inequal.")
 } else {
-  stop("CRS mismatch between birds and inequal: Double check transformations for matching CRS between spatial objects!")
+  stop("CRS mismatch between birds and inequal: 
+       Double check transformations for matching CRS 
+       between spatial objects!")
 }
 
 ```
-
 
 ### Map of Historical Redlining in Los Angeles (HOLC)
 
@@ -141,10 +142,10 @@ if (st_crs(birds) == st_crs(inequal)) {
 
 ```{r}
 # Create a custom color palette that matches the actual HOLC grade
-grade_colors <- c("A" = "#2ca25f",
+grade_colors <- c("A" = "#2ca25f", # "Best" Rank
                   "B" = "#99d8c9",
                   "C" = "#fec44f",
-                  "D" = "#de2d26")
+                  "D" = "#de2d26") # "Worst" Rank
 
 map1 <- tm_shape(inequal) + # Call spatial data source
 # Establish basemap with tm_tiles using view from Leaflet
@@ -156,8 +157,6 @@ map1 <- tm_shape(inequal) + # Call spatial data source
     alpha = 0.7, # Adjust transparency                      
     border.col = "black", # Border of graded neighborhoods
     title = "HOLC Grade")   + # Title of legend
-  tm_compass(position = c("left", "top")) + # Compass
-  tm_scalebar(position = c("left", "bottom")) + # Adjust placement of scale bar
   tm_graticules( # Add graticules to establish latitude and longitude network
     col = "black",
     lwd = 0.3, # Establish "thickness" of lines
@@ -179,9 +178,9 @@ tmap_save(map1, "figs/LA_HOC.png")
 
 ![](figs/LA_HOC.png)
 
-***Figure 1. Finalized map of census blocks within or located outside a
-HOLC graded redlined area. Areas graded “A” (light red) were considered
-“safe,” while those graded “D” (dark red) were considered “unsafe.”***
+***Map 1. Finalized map of census blocks within or located outside a
+HOLC graded redlined area. Areas graded “A” (green) were considered
+“safe,” while those graded “D” (red) were considered “unsafe.”***
 
 ### Summary Table of Census Block Groups Inside or Outside HOLC Grade
 
@@ -283,22 +282,36 @@ holc_summary <- census_holc_df %>%
     socioeconomic variable among census block groups within a HOLC grade
     and (2) visually summarize patterns between mean environmental and
     socioeconomic variables for census blocks among HOLC grades.
+    
+```{r}
+# Check that levels in socio_economic column have been successfully renamed 
+if ("socio_economic" %in% names(holc_summary)) {
+  holc_summary$socio_economic <- factor( #Convert to factor
+    holc_summary$socio_economic,
+    levels = c("mean_low_income", "mean_low_life_exp", "mean_pm25"),
+    labels = c("Average Low Income", 
+               "Average Low Life Expectancy", 
+               "Average Particulate Matter Concentration (PM 2.5)")
+  )
+  # Pass message if levels successfully renamed
+  message("'socio_economic' factor labels successfully applied.")
+  
+} else { 
+  # Stop running cell if socio_economic not successfully created 
+  stop("Error: Column 'socio_economic' not found in 'holc_summary'.")
+}
+
+```
+    
 
 ```{r}
-# Bar graph to plot mean value for each variable by HOLC grade
-# Rename levels 
-holc_summary$socio_economic <- factor(holc_summary$socio_economic, 
- levels = c("mean_low_income", "mean_low_life_exp","mean_pm25"),
- labels = c("Average Low Income", "Average Low Life Expectancy", 
-            "Average Particulate Matter Concentration (PM 2.5)"))
+# Create a bar graph to plot mean value for each variable by HOLC grade
 
 # Redefine color palette
-grade_colors <- c("A" = "#76a865", # Best rank
-                  "B" = "#7cb5bd",
-                  "C" = "#ffff00",
-                  "D" = "#d9838d") # Worst rank
-
-
+grade_colors <- c("A" = "#2ca25f", # "Best" Rank
+                  "B" = "#99d8c9",
+                  "C" = "#fec44f",
+                  "D" = "#de2d26") # "Worst" Rank
 
 # Bar graph
 grade_avg_socio <- holc_summary %>% 
@@ -309,17 +322,18 @@ grade_avg_socio <- holc_summary %>%
   labs(
     x = "HOLC Grade", 
     y = "Average Percentage or Percentile",
-    title = "Mean Environmental Justice Indicators by HOLC Grade"
+    title = "Mean Environmental Justice Indicators by HOLC Grade", 
+    fill = "HOLC Grade"
   ) +
   theme_bw()  # Set theme
   
 grade_avg_socio
 
 # Store graph in figs
-ggsave("figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png", plot = grade_avg_socio)
+#ggsave("figs/Mean_EJScreen_Indicators_by_HOLCGrade.png", plot = grade_avg_socio)
 ```
 
-![](figs/Mean_EJScreen_Indicators_by_HOLC_Grade.png)
+![](figs/Mean_EJScreen_Indicators_by_HOLCGrade.png)
 
 ***Figure 1. Finalized graph of mean percentile of environmental justice
 indicators for census blocks within or located outside a HOLC graded
@@ -348,7 +362,7 @@ heatmap_holc
 
 ![](figs/Heatmap_Mean_EJScreen_Indicators_by_HOLC_Grade.png)
 
-***Figure 3. Finalized heatmap of mean percentile of environmental
+***Figure 2. Finalized heatmap of mean percentile of environmental
 justice indicators based on census blocks within or located outside a
 HOLC graded redlined area.***
 
@@ -382,8 +396,18 @@ from 2021-2023 was calculated and visualized with a bar graph.
     same coordinate system.
 
 ```{r}
-# Ensure in same CRS! 
-st_crs(birds) == st_crs(inequal) 
+# Double check that birds and inequal are in 
+# the same CRS once more 
+
+# Compare birds and inequal, include stop() if still no match
+if (st_crs(birds) == st_crs(inequal)) {
+  message("Final check: CRS match between birds and inequal.")
+} else { # Stop running cell if there is a mismatch
+  stop("CRS mismatch between birds and inequal: 
+       Double check transformations for matching CRS between 
+       spatial objects!")
+}
+
 ```
 
 11. Perform a spatial join to assign each bird observation to a HOLC
@@ -421,12 +445,6 @@ bird_summary %>%
 ```
 
 ```{r}
-# Redefine a pallete for each grade (% of bird observations per HOLC grade)
-grade_colors <- c("A" = "#2ca25f",
-                  "B" = "#99d8c9",
-                  "C" = "#fec44f",
-                  "D" = "#de2d26")
-
 bird_summary %>% 
   ggplot(aes(x = grade, y = percent, fill = grade)) +
   geom_col() + 
@@ -436,15 +454,16 @@ bird_summary %>%
     size = 3) +
   scale_fill_manual(values = grade_colors) + # Fill with palette
   labs(
-title = "Percent of Bird Observations in Redlined Neighborhoods Within HOLC Grades (2021–2023)",
+    title = "Percent of Bird Observations in Redlined Neighborhoods 
+    Within HOLC Grades (2021–2023)",
     x = "HOLC Grade",
     y = "Percent of Bird Observations" ) +
   theme_bw() 
 ```
 
-![](figs/Percent%20of%20Bird%20Observations%20in%20Redlined%20Neighborhoods%20Within%20HOLC%20Grades.png)
+![](figs/Percent_of_Bird_Observations_in_Redlined_Neighborhoods_Within_HOLC_Grades.png)
 
-***Figure 4. Finalized bar graph of percent bird observations made in
+***Figure 3. Finalized bar graph of percent bird observations made in
 redlined neighborhoods per HOLC grade.***
 
 Interestingly, areas graded “C” accounted for the largest share of bird

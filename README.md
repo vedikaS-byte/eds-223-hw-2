@@ -21,8 +21,8 @@ EDS223-HW2
 │   figs
 │   └───Heatmap_Mean_EJScreen_Indicators_by_HOLC_Grade.png
 │   └───LA_HOC.png
-│   └───Mean_EJScreen_Indicators_by_HOLC_Grade.png
-│   └───Percent of Bird Observations in Redlined Neighborhoods Within HOLC Grades.png
+│   └───Mean_EJScreen_Indicators_by_HOLCGrade.png
+│   └───Percent_of_Bird_Observations_in_Redlined_Neighborhoods_Within_HOLC_Grades.png
 │
 └───.gitignore
      └───data
